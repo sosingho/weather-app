@@ -1,30 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# WhatsApp Weather Signal Notifier
+
+This Next.js app monitors Hong Kong Observatory weather warnings and sends a WhatsApp template message when a warning signal goes up or off.
+
+## Environment
+
+Create `.env.local` from `.env.example` and fill in:
+
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+- `CRON_SECRET`
+- `ADMIN_TOKEN`
+- `WHATSAPP_ACCESS_TOKEN`
+- `WHATSAPP_PHONE_NUMBER_ID`
+- `WHATSAPP_TO`
+- `WHATSAPP_TEMPLATE_NAME`
+
+Use `WHATSAPP_DRY_RUN=true` while testing locally.
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies and run the development server:
 
 ```bash
+pnpm install
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+pnpm lint
+pnpm test
+pnpm build
+```
 
-## Learn More
+## Cron
 
-To learn more about Next.js, take a look at the following resources:
+Vercel runs `GET /api/cron/weather-signals` every 5 minutes from `vercel.json`. The route requires:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+Authorization: Bearer <CRON_SECRET>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## WhatsApp Template
 
-## Deploy on Vercel
+The Meta-approved template should accept four body variables:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Alert status
+2. Warning name
+3. HKT timestamp
+4. Short warning detail
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The dashboard test-send button uses `ADMIN_TOKEN`.
